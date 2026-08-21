@@ -1,3 +1,5 @@
+import allure
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -63,9 +65,11 @@ class MainPage(BasePage):
         "//button[contains(@class, 'Modal_modal__close')]"
     )
 
+    @allure.step("Открыть главную страницу")
     def open_main_page(self):
         self.open(BASE_URL)
 
+    @allure.step("Закрыть модальное окно, если оно есть")
     def close_modal_if_present(self):
         try:
             close_button = WebDriverWait(self.driver, 2).until(
@@ -79,20 +83,27 @@ class MainPage(BasePage):
         except Exception:
             pass
 
+    @allure.step("Кликнуть по «Конструктор»")
     def click_constructor(self):
-        WebDriverWait(self.driver, 5).until(
+        self.close_modal_if_present()
+
+        WebDriverWait(self.driver, 15).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
         )
-        self.close_modal_if_present()
+
         self.click(self.CONSTRUCTOR)
 
+    @allure.step("Кликнуть по «Лента заказов»")
     def click_orders_feed(self):
-        WebDriverWait(self.driver, 5).until(
+        self.close_modal_if_present()
+
+        WebDriverWait(self.driver, 15).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
         )
-        self.close_modal_if_present()
+
         self.click(self.ORDERS_FEED)
 
+    @allure.step("Кликнуть по первому ингредиенту")
     def click_first_ingredient(self):
         WebDriverWait(self.driver, 5).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
@@ -100,12 +111,14 @@ class MainPage(BasePage):
         self.close_modal_if_present()
         self.click(self.FIRST_INGREDIENT)
 
+    @allure.step("Закрыть модальное окно")
     def close_modal(self):
         self.click(self.MODAL_CLOSE)
         WebDriverWait(self.driver, 5).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
         )
 
+    @allure.step("Проверить видимость модального окна")
     def is_modal_visible(self):
         try:
             return self.driver.find_element(
@@ -114,9 +127,11 @@ class MainPage(BasePage):
         except Exception:
             return False
 
+    @allure.step("Получить счётчик ингредиента")
     def get_ingredient_counter(self):
         return self.get_text(self.INGREDIENT_COUNTER)
 
+    @allure.step("Добавить первый ингредиент в заказ")
     def add_first_ingredient_to_order(self):
         ingredient = self.find_element(
             self.FIRST_INGREDIENT
@@ -134,6 +149,7 @@ class MainPage(BasePage):
             order_area
         ).perform()
 
+    @allure.step("Проверить видимость ингредиента в заказе")
     def is_ingredient_in_order(self):
         try:
             return self.driver.find_element(
@@ -142,9 +158,11 @@ class MainPage(BasePage):
         except Exception:
             return False
 
+    @allure.step("Кликнуть по кнопке «Оформить заказ»")
     def click_order_button(self):
         self.click(self.ORDER_BUTTON)
 
+    @allure.step("Получить номер заказа")
     def get_order_number(self):
         order_number = WebDriverWait(self.driver, 30).until(
             EC.visibility_of_element_located(
@@ -154,21 +172,27 @@ class MainPage(BasePage):
 
         return order_number.text
 
+    @allure.step("Создать заказ")
     def create_order(self):
         self.add_first_ingredient_to_order()
         self.click_order_button()
 
         return self.get_order_number()
 
+    @allure.step("Закрыть модальное окно заказа")
     def close_order_modal(self):
         close_button = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(self.ORDER_MODAL_CLOSE)
         )
         self.driver.execute_script("arguments[0].click();", close_button)
 
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 30).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal')]"))
         )
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 30).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
         )
+
+    @allure.step("Получить текущий URL")
+    def get_current_url(self):
+        return self.driver.current_url

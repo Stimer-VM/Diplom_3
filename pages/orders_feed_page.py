@@ -1,3 +1,5 @@
+import allure
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -30,21 +32,25 @@ class OrdersFeedPage(BasePage):
         "//p[contains(text(), 'В работе')]/following-sibling::ul[1]/li"
     )
 
+    @allure.step("Проверить, что страница ленты заказов открыта")
     def is_orders_feed_opened(self):
         return self.find_element(
             self.ORDERS_FEED_TITLE
         ).is_displayed()
 
+    @allure.step("Получить количество выполненных заказов за всё время")
     def get_total_orders(self):
         return int(
             self.get_text(self.ORDERS_TOTAL)
         )
 
+    @allure.step("Получить количество выполненных заказов за сегодня")
     def get_today_orders(self):
         return int(
             self.get_text(self.ORDERS_TODAY)
         )
 
+    @allure.step("Получить заказы в работе")
     def get_orders_in_work(self):
         WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located(
@@ -60,18 +66,21 @@ class OrdersFeedPage(BasePage):
             if order.text.strip()
         ]
 
+    @allure.step("Дождаться увеличения счётчика «Выполнено за всё время»")
     def wait_for_total_orders_increase(self, old_total):
         WebDriverWait(self.driver, 90).until(
             lambda driver: self.get_total_orders() > old_total
         )
         return self.get_total_orders()
 
+    @allure.step("Дождаться увеличения счётчика «Выполнено за сегодня»")
     def wait_for_today_orders_increase(self, old_today):
         WebDriverWait(self.driver, 90).until(
             lambda driver: self.get_today_orders() > old_today
         )
         return self.get_today_orders()
 
+    @allure.step("Дождаться появления нового заказа в работе")
     def wait_for_new_order_in_work(self, old_orders):
         def new_order_appeared(driver):
             current_orders = self.get_orders_in_work()
@@ -82,6 +91,7 @@ class OrdersFeedPage(BasePage):
         current_orders = self.get_orders_in_work()
         return next(order for order in current_orders if order not in old_orders)
 
+    @allure.step("Проверить, что заказ находится в работе")
     def is_order_in_work(self, order_number):
         order_number = str(order_number).strip()
 

@@ -4,15 +4,17 @@ from pages.login_page import LoginPage
 from data import EMAIL, PASSWORD
 
 
-@allure.title("Вход в аккаунт")
-def test_login(driver):
-    page = LoginPage(driver)
+class TestLogin:
 
-    page.login_from_main_page(
-        EMAIL,
-        PASSWORD
-    )
+    @allure.title("Вход в аккаунт")
+    def test_login(self, driver):
+        page = LoginPage(driver)
 
-    page.open_personal_account()
+        page.login_from_main_page(
+            EMAIL,
+            PASSWORD
+        )
 
-    assert page.is_logout_button_visible()
+        page.open_personal_account()
+
+        assert page.is_logout_button_visible()

@@ -4,63 +4,65 @@ from pages.main_page import MainPage
 from urls import BASE_URL
 
 
-@allure.title("Переход в раздел «Конструктор»")
-def test_constructor_navigation(driver):
-    page = MainPage(driver)
+class TestMainPage:
 
-    page.open_main_page()
-    page.click_constructor()
+    @allure.title("Переход в раздел «Конструктор»")
+    def test_constructor_navigation(self, driver):
+        page = MainPage(driver)
 
-    assert driver.current_url == BASE_URL + "/"
+        page.open_main_page()
+        page.click_constructor()
 
-
-@allure.title("Открытие деталей ингредиента")
-def test_ingredient_modal_opens(driver):
-    page = MainPage(driver)
-
-    page.open_main_page()
-    page.click_first_ingredient()
-
-    assert page.is_modal_visible()
+        assert page.get_current_url() == BASE_URL + "/"
 
 
-@allure.title("Закрытие окна с деталями ингредиента")
-def test_ingredient_modal_closes(driver):
-    page = MainPage(driver)
+    @allure.title("Открытие деталей ингредиента")
+    def test_ingredient_modal_opens(self, driver):
+        page = MainPage(driver)
 
-    page.open_main_page()
-    page.click_first_ingredient()
+        page.open_main_page()
+        page.click_first_ingredient()
 
-    assert page.is_modal_visible()
-
-    page.close_modal()
-
-    assert not page.is_modal_visible()
+        assert page.is_modal_visible()
 
 
-@allure.title("Добавление ингредиента в заказ")
-def test_add_ingredient_to_order(driver):
-    page = MainPage(driver)
+    @allure.title("Закрытие окна с деталями ингредиента")
+    def test_ingredient_modal_closes(self, driver):
+        page = MainPage(driver)
 
-    page.open_main_page()
+        page.open_main_page()
+        page.click_first_ingredient()
 
-    page.add_first_ingredient_to_order()
+        assert page.is_modal_visible()
 
-    assert page.is_ingredient_in_order()
+        page.close_modal()
+
+        assert not page.is_modal_visible()
 
 
-@allure.title("Счётчик ингредиента увеличивается после добавления в заказ")
-def test_ingredient_counter_increases(driver):
-    page = MainPage(driver)
+    @allure.title("Добавление ингредиента в заказ")
+    def test_add_ingredient_to_order(self, driver):
+        page = MainPage(driver)
 
-    page.open_main_page()
+        page.open_main_page()
 
-    old_counter = int(page.get_ingredient_counter())
-
-    if "chrome" in driver.capabilities["browserName"].lower():
         page.add_first_ingredient_to_order()
-        new_counter = int(page.get_ingredient_counter())
-        assert new_counter > old_counter
-    else:
-        page.add_first_ingredient_to_order()
+
         assert page.is_ingredient_in_order()
+
+
+    @allure.title("Счётчик ингредиента увеличивается после добавления в заказ")
+    def test_ingredient_counter_increases(self, driver):
+        page = MainPage(driver)
+
+        page.open_main_page()
+
+        old_counter = int(page.get_ingredient_counter())
+
+        if "chrome" in driver.capabilities["browserName"].lower():
+            page.add_first_ingredient_to_order()
+            new_counter = int(page.get_ingredient_counter())
+            assert new_counter > old_counter
+        else:
+            page.add_first_ingredient_to_order()
+            assert page.is_ingredient_in_order()

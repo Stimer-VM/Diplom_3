@@ -1,3 +1,5 @@
+import allure
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -48,9 +50,11 @@ class LoginPage(BasePage):
         "//button[contains(@class, 'Modal_modal__close')]"
     )
 
+    @allure.step("Открыть главную страницу")
     def open_main_page(self):
         self.open(BASE_URL)
 
+    @allure.step("Кликнуть по кнопке «Войти в аккаунт»")
     def click_login_from_main(self):
         button = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
@@ -63,6 +67,7 @@ class LoginPage(BasePage):
             button
         )
 
+    @allure.step("Ввести email")
     def enter_email(self, email):
         WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
@@ -70,6 +75,7 @@ class LoginPage(BasePage):
             )
         ).send_keys(email)
 
+    @allure.step("Ввести пароль")
     def enter_password(self, password):
         WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
@@ -77,6 +83,7 @@ class LoginPage(BasePage):
             )
         ).send_keys(password)
 
+    @allure.step("Кликнуть по кнопке «Войти»")
     def click_login(self):
         WebDriverWait(self.driver, 5).until(
             EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
@@ -87,6 +94,7 @@ class LoginPage(BasePage):
             )
         ).click()
 
+    @allure.step("Войти в аккаунт")
     def login_from_main_page(self, email, password):
         self.open_main_page()
         self.click_login_from_main()
@@ -94,6 +102,7 @@ class LoginPage(BasePage):
         self.enter_password(password)
         self.click_login()
 
+    @allure.step("Закрыть модальное окно, если оно есть")
     def close_modal_if_present(self):
         try:
             close_button = WebDriverWait(self.driver, 2).until(
@@ -116,6 +125,7 @@ class LoginPage(BasePage):
         except Exception:
             pass
 
+    @allure.step("Открыть личный кабинет")
     def open_personal_account(self):
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(
@@ -140,6 +150,7 @@ class LoginPage(BasePage):
             EC.url_contains("/account")
         )
 
+    @allure.step("Проверить видимость кнопки «Выход»")
     def is_logout_button_visible(self):
         return WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(
