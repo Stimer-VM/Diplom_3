@@ -86,7 +86,7 @@ class LoginPage(BasePage):
     @allure.step("Кликнуть по кнопке «Войти»")
     def click_login(self):
         WebDriverWait(self.driver, 5).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
         WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(

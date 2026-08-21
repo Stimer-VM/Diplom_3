@@ -1,10 +1,5 @@
 import allure
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-
 from pages.main_page import MainPage
 from pages.orders_feed_page import OrdersFeedPage
 
@@ -37,12 +32,9 @@ class TestOrdersFeed:
         main_page.click_constructor()
         main_page.create_order()
         main_page.close_order_modal()
+        main_page.close_modal_if_present()
 
-        WebDriverWait(driver, 15).until(
-            EC.invisibility_of_element_located(
-                (By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]")
-            )
-        )
+        main_page.wait_for_overlay_to_disappear()
 
         main_page.click_orders_feed()
 
@@ -65,6 +57,9 @@ class TestOrdersFeed:
         main_page.click_constructor()
         main_page.create_order()
         main_page.close_order_modal()
+        main_page.close_modal_if_present()
+
+        main_page.wait_for_overlay_to_disappear()
 
         main_page.click_orders_feed()
 
@@ -87,12 +82,9 @@ class TestOrdersFeed:
         main_page.click_constructor()
         main_page.create_order()
         main_page.close_order_modal()
+        main_page.close_modal_if_present()
 
-        WebDriverWait(driver, 15).until(
-            EC.invisibility_of_element_located(
-                (By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]")
-            )
-        )
+        main_page.wait_for_overlay_to_disappear()
 
         main_page.click_orders_feed()
 

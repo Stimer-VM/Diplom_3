@@ -65,6 +65,11 @@ class MainPage(BasePage):
         "//button[contains(@class, 'Modal_modal__close')]"
     )
 
+    MODAL_OVERLAY = (
+        By.XPATH,
+        "//div[contains(@class, 'Modal_modal_overlay')]"
+    )
+
     @allure.step("Открыть главную страницу")
     def open_main_page(self):
         self.open(BASE_URL)
@@ -88,7 +93,7 @@ class MainPage(BasePage):
         self.close_modal_if_present()
 
         WebDriverWait(self.driver, 15).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
 
         self.click(self.CONSTRUCTOR)
@@ -98,7 +103,7 @@ class MainPage(BasePage):
         self.close_modal_if_present()
 
         WebDriverWait(self.driver, 15).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
 
         self.click(self.ORDERS_FEED)
@@ -106,7 +111,7 @@ class MainPage(BasePage):
     @allure.step("Кликнуть по первому ингредиенту")
     def click_first_ingredient(self):
         WebDriverWait(self.driver, 5).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
         self.close_modal_if_present()
         self.click(self.FIRST_INGREDIENT)
@@ -115,7 +120,7 @@ class MainPage(BasePage):
     def close_modal(self):
         self.click(self.MODAL_CLOSE)
         WebDriverWait(self.driver, 5).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
 
     @allure.step("Проверить видимость модального окна")
@@ -187,10 +192,30 @@ class MainPage(BasePage):
         self.driver.execute_script("arguments[0].click();", close_button)
 
         WebDriverWait(self.driver, 30).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal')]"))
+            EC.invisibility_of_element_located(self.MODAL)
         )
         WebDriverWait(self.driver, 30).until(
-            EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class, 'Modal_modal_overlay')]"))
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
+        )
+
+    @allure.step("Закрыть модальное окно, если оно есть")
+    def close_modal_if_present(self):
+        try:
+            close_button = WebDriverWait(self.driver, 2).until(
+                EC.element_to_be_clickable(self.MODAL_CLOSE)
+            )
+            close_button.click()
+
+            WebDriverWait(self.driver, 5).until(
+                EC.invisibility_of_element_located(self.MODAL)
+            )
+        except Exception:
+            pass
+        
+    @allure.step("Ожидать исчезновения оверлея")
+    def wait_for_overlay_to_disappear(self):
+        WebDriverWait(self.driver, 15).until(
+            EC.invisibility_of_element_located(self.MODAL_OVERLAY)
         )
 
     @allure.step("Получить текущий URL")
